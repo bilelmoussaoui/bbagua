@@ -1,0 +1,23 @@
+{
+  "name": "bbagua-eur50-plumbing",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Interactive 3D plumbing guide for the Bbagua EUR-50 reverse osmosis unit",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "check": "biome check --write .",
+    "ci": "biome ci . && vite build"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.4",
+    "vite": "^6.0.0"
+  }
+}

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EUR-50 Plumbing</title>
+<meta name="description" content="Interactive 3D guide to how the Bbagua EUR-50 reverse osmosis unit is plumbed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<div class="gl" id="gl" role="region" aria-label="3D model of the EUR-50 under the sink"></div>
+
+<header class="hud-top" id="top">
+  <div class="title">
+    <p class="brand"><i class="drop"></i>Bbagua EUR-50 · 5-stage reverse osmosis</p>
+    <h1>How it’s plumbed</h1>
+  </div>
+  <div class="modes">
+    <div class="seg" id="modes" role="group" aria-label="What the water is doing">
+      <span class="seg-ink" aria-hidden="true"></span>
+      <button type="button" data-m="making" aria-pressed="true">Making water</button>
+      <button type="button" data-m="full" aria-pressed="false">Tank full</button>
+      <button type="button" data-m="tap" aria-pressed="false">Faucet open</button>
+    </div>
+    <p class="status" id="status" aria-live="polite"></p>
+  </div>
+</header>
+
+<div class="hud-bottom">
+  <div class="card tour" id="tour">
+    <button class="tour-start" id="tStart" type="button">
+      <span class="ring"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+      <span><b>Follow the water</b><small>10 steps · tap to glass</small></span>
+    </button>
+    <div class="tour-body" id="tBody" hidden>
+      <div class="tsteps" id="tSteps"></div>
+      <p class="tmeta"><span id="tN"></span><b id="tT"></b></p>
+      <p class="tcap" id="tC"></p>
+      <div class="tnav">
+        <button type="button" id="tPrev" aria-label="Previous step"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button type="button" id="tPlay" aria-label="Pause"><svg viewBox="0 0 24 24" class="i-pause"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg><svg viewBox="0 0 24 24" class="i-play"><path d="M8 5v14l11-7z"/></svg></button>
+        <button type="button" id="tNext" aria-label="Next step"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+        <button type="button" id="tExit" class="ghost">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint card" id="hint">
+    <span><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M21 4v5h-5"/></svg>Drag to orbit</span>
+    <span><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8v6M8 11h6"/></svg><em class="desk">Scroll</em><em class="touch">Pinch</em> to zoom</span>
+    <span><svg viewBox="0 0 24 24"><path d="M9 11V5a2 2 0 0 1 4 0v6l4 1a2 2 0 0 1 1.5 2.3L17.5 20H10l-4-5 1.2-1.2a1.5 1.5 0 0 1 1.8-.2L9 14"/></svg>Tap any part</span>
+  </p>
+
+  <div class="corner">
+    <div class="card legend" id="legend" hidden></div>
+    <div class="chips">
+      <button type="button" class="chip" id="legendBtn" aria-expanded="false" aria-controls="legend"><span class="rainbow"></span>Tubes</button>
+      <button type="button" class="chip icon" id="aboutBtn" aria-label="About">i</button>
+    </div>
+  </div>
+</div>
+
+<aside class="drawer card" id="drawer" aria-live="polite" hidden>
+  <button class="x" id="drawerX" type="button" aria-label="Close">×</button>
+  <div id="drawerBody"></div>
+</aside>
+
+<dialog class="dlg valve-dlg" id="valveDlg" aria-labelledby="valveTitle">
+  <button class="x" type="button" data-close aria-label="Close">×</button>
+  <div class="vgl" id="vgl"></div>
+  <div class="vtext">
+    <p class="kicker">The part people get wrong</p>
+    <h2 id="valveTitle">4-way valve</h2>
+    <p class="big">Two halves, one pair each, straight through from <span class="pill in">IN</span> to <span class="pill out">OUT</span>.</p>
+    <ul class="ports" id="ports">
+      <li data-port="feedIn"><span class="pill in">IN</span><i class="d" style="--c:#10a0b4"></i>Screw half: pre-filtered water from stage 3</li>
+      <li data-port="feedOut"><span class="pill out">OUT</span><i class="d" style="--c:#10a0b4"></i>Screw half: on to the membrane</li>
+      <li data-port="prodIn"><span class="pill in">IN</span><i class="d" style="--c:#8a4fd0"></i>Marked half: clean water from the membrane</li>
+      <li data-port="prodOut"><span class="pill out">OUT</span><i class="d" style="--c:#8a4fd0"></i>Marked half: on to the tank and faucet</li>
+    </ul>
+    <div class="fix">
+      <b>Tank never fills?</b>
+      The marked half has a one-way check valve inside: you can only blow into its <span class="pill in">IN</span>. Make sure the membrane’s tube goes there, and never put an IN tube on an OUT.
+    </div>
+  </div>
+</dialog>
+
+<dialog class="dlg about-dlg" id="aboutDlg" aria-labelledby="aboutTitle">
+  <button class="x" type="button" data-close aria-label="Close">×</button>
+  <p class="kicker">About</p>
+  <h2 id="aboutTitle">How the EUR-50 is plumbed</h2>
+  <p>An interactive guide to reconnecting a Bbagua EUR-50 reverse osmosis unit, based on its manual and a unit taken apart.</p>
+  <p>Real tubes are white, apart from the black drain tube. The coloured band at each end is only a code for matching ends. The cutaways, water colours and the layout under the sink are illustrations.</p>
+  <p>Not affiliated with Bbagua. Check your unit’s manual before working on it.</p>
+</dialog>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
