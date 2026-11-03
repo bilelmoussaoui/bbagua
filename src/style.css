@@ -1058,37 +1058,109 @@ b.out {
 @media (max-width: 720px) {
   .hud-top {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+  }
+  .brand {
+    font-size: 11.5px;
+    margin-bottom: 4px;
+  }
+  h1 {
+    font-size: 22px;
   }
   .modes {
     align-items: stretch;
     max-width: none;
     width: 100%;
+    gap: 6px;
+  }
+  .seg {
+    padding: 3px;
+    border-radius: 10px;
+  }
+  .seg-ink {
+    top: 3px;
+    bottom: 3px;
+    border-radius: 8px;
   }
   .seg button {
     flex: 1;
-    padding: 8px 4px;
-    font-size: 13px;
+    padding: 6px 2px;
+    font-size: 12px;
+    border-radius: 8px;
   }
   .status {
     text-align: left;
+    font-size: 12px;
   }
+  /* sits in the empty strip above the bottom controls, clear of the model */
   .hint {
     position: fixed;
     left: 50%;
-    bottom: auto;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 12px;
+    bottom: calc(max(var(--pad), env(safe-area-inset-bottom)) + 48px);
+    transform: translateX(-50%);
+    gap: 0;
+    padding: 3px;
+    font-size: 11.5px;
   }
   .hint span {
-    padding: 4px 8px 4px 6px;
+    gap: 5px;
+    padding: 3px 8px 3px 5px;
   }
-  .hint span + span {
-    border-left: 0;
+  .hint svg {
+    width: 15px;
+    height: 15px;
   }
   .hint.used {
-    transform: translate(-50%, -40%);
+    transform: translate(-50%, 8px);
+  }
+  .tour.open ~ .hint {
+    display: none;
+  }
+  .tour-start {
+    gap: 9px;
+    padding: 3px 10px 3px 3px;
+  }
+  .tour-start b {
+    font-size: 13px;
+  }
+  .tour-start small {
+    font-size: 10.5px;
+  }
+  .ring {
+    width: 30px;
+    height: 30px;
+  }
+  .ring svg {
+    width: 13px;
+    height: 13px;
+  }
+  .tour-body {
+    padding: 8px 8px 4px;
+  }
+  .tsteps {
+    margin-bottom: 8px;
+  }
+  .tmeta b {
+    font-size: 14.5px;
+  }
+  .tcap {
+    font-size: 13px;
+    min-height: 2.6em;
+    margin-top: 4px;
+  }
+  .tnav {
+    margin-top: 6px;
+  }
+  .tnav button {
+    width: 32px;
+    height: 32px;
+  }
+  .chip {
+    height: 32px;
+    font-size: 12.5px;
+  }
+  .chip.icon {
+    width: 32px;
   }
   .hud-bottom {
     align-items: flex-end;
@@ -1100,7 +1172,7 @@ b.out {
     display: none;
   }
   .chip:not(.icon) {
-    padding: 0 12px;
+    padding: 0 11px;
   }
   .drawer {
     top: auto;
@@ -1119,6 +1191,22 @@ b.out {
   }
   .lbl {
     font-size: 10.5px;
+  }
+  /* badges collapse to their marker so the unit stays visible; the name shows when
+     the part is picked or once you zoom in */
+  .css2d:not(.near) .lbl:not(.on):not(:hover) {
+    gap: 0;
+    padding: 3px;
+  }
+  .css2d:not(.near) .lbl:not(.on):not(:hover) .t {
+    display: none;
+  }
+  .css2d:not(.near) .lbl:not(.stage):not(.on):not(:hover)::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
   }
 }
 @keyframes sheetin {

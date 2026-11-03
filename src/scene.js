@@ -1017,7 +1017,11 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     FR: ['Restrictor', [-0.15, 0.15, -0.68]],
   };
   Object.entries(LBL).forEach(([id, [html, pos]]) => {
-    const l = label(html, `lbl${html.startsWith('<b>') ? ' stage' : ''}`);
+    // the name sits in its own span so small screens can collapse a badge to its marker
+    const l = label(
+      html.replace(/^(<b>\d<\/b>)?(.*)$/, '$1<span class="t">$2</span>'),
+      `lbl${html.startsWith('<b>') ? ' stage' : ''}`,
+    );
     l.position.set(...pos);
     l.element.setAttribute('aria-label', PARTS[id].t);
     l.element.addEventListener('click', (e) => {
@@ -1088,6 +1092,11 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     Object.assign(inset, i);
     off.tx = (inset.right - inset.left) / 2;
     off.ty = (inset.bottom - inset.top) / 2;
+    fitLimits();
+  }
+  // a tall phone screen needs the camera much further back to fit the unit's width
+  function fitLimits() {
+    controls.maxDistance = Math.max(30, overviewDist() * 1.3);
   }
   function overviewDist() {
     const fov = THREE.MathUtils.degToRad(camera.fov / 2);
@@ -1321,6 +1330,8 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     } else drip.material.opacity = damp(drip.material.opacity, 0, 6, dt);
 
     renderer.render(scene, camera);
+    // zoomed in, there is room for the full names (small screens collapse them otherwise)
+    css.domElement.classList.toggle('near', camera.position.distanceTo(controls.target) < overviewDist() * 0.55);
     css.render(scene, camera);
   }
 
@@ -1331,6 +1342,7 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     css.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    fitLimits();
   }
   new ResizeObserver(resize).observe(host);
   resize();
