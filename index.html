@@ -70,7 +70,16 @@
 
 <dialog class="dlg valve-dlg" id="valveDlg" aria-labelledby="valveTitle">
   <button class="x" type="button" data-close aria-label="Close">×</button>
-  <div class="vgl" id="vgl"></div>
+  <div class="vgl">
+    <div class="vstate">
+      <div class="vseg" id="vseg" role="group" aria-label="What the valve is doing">
+        <button type="button" data-v="fill" aria-pressed="true">Tank filling</button>
+        <button type="button" data-v="full" aria-pressed="false">Tank full</button>
+      </div>
+      <p class="vcap" id="vcap" aria-live="polite"></p>
+    </div>
+    <div class="vview" id="vgl"></div>
+  </div>
   <div class="vtext">
     <p class="kicker">The part people get wrong</p>
     <h2 id="valveTitle">4-way valve</h2>

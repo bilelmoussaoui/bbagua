@@ -57,9 +57,9 @@ export const PARTS = {
   S1: {
     k: 'Stage 1',
     t: 'Sediment 5 µm',
-    d: 'Spun polypropylene that catches sand, rust and particles. Right cup. The water goes on to stage 2 through a channel inside the shared head, not a tube. Unscrew the cup to change the cartridge.',
+    d: 'Spun polypropylene that catches sand, rust and particles. Left cup, under the gauge. The water goes on to stage 2 through a channel inside the shared head, not a tube. Unscrew the cup to change the cartridge.',
     life: [1],
-    conn: [['orange', 'In (middle of the head’s right end) ← cold supply']],
+    conn: [['orange', 'In (middle of the head’s left end, gauge side) ← cold supply']],
     flush: true,
   },
   S2: {
@@ -73,9 +73,9 @@ export const PARTS = {
   S3: {
     k: 'Stage 3',
     t: 'Carbon block',
-    d: 'Compressed carbon in a white net, the last pre-filter. Left cup, under the gauge. Fed from stage 2 inside the shared head. Unscrew the cup to change the cartridge.',
+    d: 'Compressed carbon in a white net, the last pre-filter. Right cup. Fed from stage 2 inside the shared head. Unscrew the cup to change the cartridge.',
     life: [1],
-    conn: [['teal', 'Out (middle of the head’s left end) → T-fitting on the shelf (gauge + valve)']],
+    conn: [['teal', 'Out (middle of the head’s right end) → T-fitting on the shelf (gauge + valve)']],
     flush: true,
   },
   GT: {
@@ -194,8 +194,8 @@ export const FLUSH = [
 ];
 
 export const CONNS = {
-  k1: { n: 'Water in', tube: 'orange', from: 'Adapter valve', to: 'Head inlet, right end' },
-  k4: { n: 'Stage 3 out', tube: 'teal', from: 'Head outlet, left end', to: 'Gauge T-fitting' },
+  k1: { n: 'Water in', tube: 'orange', from: 'Adapter valve', to: 'Head inlet, left end (gauge side)' },
+  k4: { n: 'Stage 3 out', tube: 'teal', from: 'Head outlet, right end', to: 'Gauge T-fitting' },
   kG: { n: 'Gauge line', tube: 'teal', from: 'Gauge T-fitting', to: 'Pressure gauge' },
   k4b: { n: 'Into the valve', tube: 'teal', from: 'Gauge T-fitting', to: 'Valve screw half, IN (bottom)' },
   k5: { n: 'To the membrane', tube: 'teal', from: 'Valve screw half, OUT (top)', to: 'Membrane cap end' },

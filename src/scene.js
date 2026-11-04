@@ -10,20 +10,20 @@ import { sectionMaterial } from './section.js';
 /* Layout in scene units (~10 cm). x → right, y → up, z → toward viewer.
    Shelf top at y = 0, cups hang below it, floor at y = -3.35, countertop at y = 3.0. */
 const ROUTES = {
+  // inlet on the gauge (left) end of the head, outlet on the right end
   k1: [
     [-3.68, -2.25, -0.95],
     [-3.2, -2.25, -0.95],
-    [-3.2, -3.15, -0.1],
-    [-3.2, -3.15, 1.0],
-    [2.7, -3.15, 1.0],
-    [2.7, -3.15, 0],
-    [2.7, -0.31, 0],
-    [2.48, -0.31, 0],
+    [-3.2, -2.25, 0],
+    [-3.2, -0.31, 0],
+    [-2.48, -0.31, 0],
   ],
   k4: [
-    [-2.48, -0.31, 0],
-    [-2.9, -0.31, 0],
-    [-2.9, 0.12, 0],
+    [2.48, -0.31, 0],
+    [2.64, -0.31, 0],
+    [2.64, -0.31, -0.75],
+    [-2.9, -0.31, -0.75],
+    [-2.9, 0.12, -0.75],
     [-2.9, 0.12, -0.55],
     [-2.62, 0.12, -0.55],
   ],
@@ -97,9 +97,9 @@ const ROUTES = {
 const HIGH = [0.25, 0.95, 1];
 export const FOCUS = {
   SRC: { t: [-3.6, -2.5, -0.4], d: 5 },
-  S1: { t: [1.6, -1.4, 0.3], d: 5.6 },
+  S1: { t: [-1.6, -1.4, 0.3], d: 5.6 },
   S2: { t: [0, -1.4, 0.3], d: 5.6 },
-  S3: { t: [-1.6, -1.4, 0.3], d: 5.6 },
+  S3: { t: [1.6, -1.4, 0.3], d: 5.6 },
   GA: { t: [-2.0, 0.45, 0.6], d: 3.2 },
   GT: { t: [-2.3, 0.2, -0.2], d: 3.8, dir: HIGH },
   V: { t: [2.9, 0.35, 0.25], d: 3.8 },
@@ -437,15 +437,15 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
   const gripGeo = new THREE.BoxGeometry(0.04, 0.24, 0.04);
   /* Product photos: the three cups hang from ONE moulded head block under the shelf. Stage 1 → 2 → 3
      run through channels inside it, so there are no tubes between the cups. Only the inlet (stage 1 end
-     face) and the outlet (stage 3 end face) are push-fit ports. Each cup unscrews
+     face, gauge side) and the outlet (stage 3 end face) are push-fit ports. Each cup unscrews
      from the head to change its cartridge. */
   add(bracket, new RoundedBoxGeometry(4.7, 0.56, 1.2, 3, 0.1), M.plastic(), [0, -0.31, 0]);
   // faint moulding seams where each head bulges out of the block
   [1.6, 0, -1.6].forEach((x) => add(bracket, cylY(0.64, 0.5, 56), M.plastic(0xf1f4f6), [x, -0.33, 0]));
   [
-    ['S1', 1.6],
+    ['S1', -1.6],
     ['S2', 0],
-    ['S3', -1.6],
+    ['S3', 1.6],
   ].forEach(([id, x]) => {
     const g = part(id);
     add(g, cylY(0.63, 0.1, 56), M.plastic(0xeef1f3), [x, -0.63, 0]);
@@ -481,7 +481,7 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
       add(g, gripGeo, M.plastic(0xf0f2f4), [x + Math.sin(ang) * 0.6, -0.84, Math.cos(ang) * 0.6]);
     }
     // the unit's only pre-filter ports: inlet on the stage 1 end face, outlet on the stage 3 end face
-    const port = id === 'S1' ? 1 : id === 'S3' ? -1 : 0;
+    const port = id === 'S1' ? -1 : id === 'S3' ? 1 : 0;
     if (port) {
       // threaded boss in the middle of the end face, push-fit nipple the tube plugs onto
       add(g, cylX(0.12, 0.07, 24), M.plastic(), [port * 2.38, -0.31, 0]);
@@ -736,8 +736,13 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
   const TX = 4.7,
     TZ = -0.1,
     TB = -3.35;
+  // the bottom curves up into the tank: it stands on its outer rim and the air valve sits in the recess
+  const BOT = 0.14;
   const prof = [
-    [0, 0],
+    [0, BOT],
+    [0.17, BOT - 0.01],
+    [0.3, 0.05],
+    [0.4, 0],
     [0.95, 0],
     [1.1, 0.05],
     [1.15, 0.18],
@@ -776,12 +781,10 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     [TX, TB, TZ],
   );
   shell.castShadow = true;
-  add(
-    tk,
-    new THREE.TorusGeometry(1.155, 0.022, 8, 72, Math.PI * 1.5).rotateX(Math.PI / 2).rotateY(Math.PI),
-    M.plastic(0xe6e5df),
-    [TX, TB + 0.95, TZ],
-  );
+  // air valve (tyre-type, Schrader) screwed into the centre of the recess, black cap
+  add(tk, cylY(0.04, 0.03, 6), M.plastic(0xdad8d1), [TX, TB + BOT - 0.015, TZ]);
+  add(tk, cylY(0.016, 0.06, 12), M.chrome(), [TX, TB + BOT - 0.06, TZ]);
+  add(tk, cylY(0.024, 0.045, 12), M.matte(0x1d2125), [TX, TB + BOT - 0.1, TZ]);
   // top valve: ribbed collar, horizontal body, flat blue lever, outlet pointing at the unit
   add(tk, cylY(0.16, 0.1, 24), M.plastic(0xe9e8e2), [TX, TB + 3.03, TZ]);
   for (let a = 0; a < 18; a++) {
@@ -802,7 +805,7 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
   add(tk, cylY(0.04, 0.06, 16), M.plastic(0xf6f6f4), [TX, VB + 0.11, TZ]);
   add(tk, new RoundedBoxGeometry(0.34, 0.04, 0.09, 2, 0.015), M.matte(0x1e5fc0), [TX - 0.07, VB + 0.15, TZ]);
   // inside, as a solid cross-section: water on top, rubber diaphragm, air charge below
-  const innerR = (y) => radiusAt(Math.min(2.94, Math.max(0.06, y))) * 0.955;
+  const innerR = (y) => radiusAt(Math.min(2.94, Math.max(0.2, y))) * 0.955;
   const regionMats = {
     water: new THREE.MeshPhysicalMaterial({
       color: WATER.clean.c,
@@ -826,7 +829,16 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     const g = new THREE.Group();
     g.position.set(TX, TB, TZ);
     tk.add(g);
-    const pts = [new THREE.Vector2(0.001, ya)];
+    // floor follows the curved-up bottom, just inside the shell
+    const pts = [
+      [0.001, BOT + 0.04],
+      [0.17, BOT + 0.03],
+      [0.31, 0.1],
+      [0.42, 0.05],
+      [0.95, 0.05],
+      [1.06, 0.08],
+      [1.09, ya],
+    ].map(([r, y]) => new THREE.Vector2(r, y));
     for (let i = 0; i <= 24; i++) {
       const y = ya + ((yb - ya) * i) / 24;
       pts.push(new THREE.Vector2(innerR(y), y));
@@ -843,8 +855,8 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
       g.add(m);
     });
   }
-  solid('water', 0.06, 2.94);
-  solid('air', 0.06, 2.94);
+  solid('water', 0.2, 2.94);
+  solid('air', 0.2, 2.94);
   const rubber = add(tk, new THREE.CylinderGeometry(1, 1, 0.07, 60, 1, false, CUT0, CUTL), regionMats.rubber, [
     TX,
     0,
@@ -858,7 +870,19 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     return l;
   };
   const lblWater = tankLbl('Water', 'w'),
-    lblAir = tankLbl('Air charge', 'a');
+    lblAir = tankLbl('Air charge', 'a'),
+    lblValve = tankLbl('Air valve', 'a');
+  lblValve.position.set(TX + 0.07, TB + BOT - 0.08, TZ + 0.02);
+  lblValve.center.set(0, 0.5);
+  // the inside labels only make sense while the cut-away quarter (+x/+z) faces the camera
+  const tankDir = new THREE.Vector3();
+  let lvlShow = { w: 1, a: 1 },
+    cutShow = 1;
+  function tankLabelOpacity() {
+    lblWater.element.style.opacity = lvlShow.w * cutShow;
+    lblAir.element.style.opacity = lvlShow.a * cutShow;
+    lblValve.element.style.opacity = cutShow;
+  }
   let level = 0.45,
     levelTarget = 0.45;
   function applyLevel(l) {
@@ -871,9 +895,9 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     const r = innerR(y);
     rubber.scale.set(r, 1, r);
     lblWater.position.set(TX + 0.45, TB + (y + 2.94) / 2, TZ + 0.02);
-    lblAir.position.set(TX + 0.45, TB + (0.06 + y) / 2, TZ + 0.02);
-    lblWater.element.style.opacity = 2.94 - y > 0.35 ? 1 : 0;
-    lblAir.element.style.opacity = y > 0.35 ? 1 : 0;
+    lblAir.position.set(TX + 0.45, TB + (BOT + 0.06 + y) / 2, TZ + 0.02);
+    lvlShow = { w: 2.94 - y > 0.35 ? 1 : 0, a: y - BOT > 0.35 ? 1 : 0 };
+    tankLabelOpacity();
   }
 
   /* ---- faucet on the countertop (not photographed yet) ---- */
@@ -1009,9 +1033,9 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
 
   /* ---------------- labels ---------------- */
   const LBL = {
-    S1: ['<b>1</b>Sediment', [1.6, -1.75, 0.62]],
+    S1: ['<b>1</b>Sediment', [-1.6, -1.75, 0.62]],
     S2: ['<b>2</b>Granular carbon', [0, -1.75, 0.62]],
-    S3: ['<b>3</b>Carbon block', [-1.6, -1.75, 0.62]],
+    S3: ['<b>3</b>Carbon block', [1.6, -1.75, 0.62]],
     S4: ['<b>4</b>Membrane', [0.95, 0.5, 0.36]],
     S5: ['<b>5</b>Post-filter', [0.15, 1.12, 0.17]],
     V: ['4-way valve', [2.87, -0.4, 0.45]],
@@ -1039,6 +1063,19 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     root.add(l);
     labels[id] = l;
   });
+
+  // every 3D label, so the ones that drift under the page header or bottom bar can be hidden
+  const allLabels = [];
+  root.traverse((o) => o.isCSS2DObject && allLabels.push(o));
+  const lp = new THREE.Vector3();
+  function hideUnderHud() {
+    const H = host.clientHeight;
+    allLabels.forEach((l) => {
+      lp.setFromMatrixPosition(l.matrixWorld).project(camera);
+      const y = ((1 - lp.y) / 2) * H;
+      l.element.classList.toggle('under-hud', y < inset.top + 6 || y > H - inset.bottom);
+    });
+  }
 
   /* ---------------- materials registry for highlight ---------------- */
   Object.values(parts).forEach((g) =>
@@ -1318,6 +1355,13 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     chamberPhase += dt * unitFlow * (reduceMotion ? 0.2 : 0.55);
     chambers.forEach((c) => (c.u.uPhase.value = chamberPhase));
 
+    // cut faces look toward +z and +x: hide the inside labels once the camera is behind/left of them
+    tankDir.set(camera.position.x - TX, 0, camera.position.z - TZ).normalize();
+    const cs = Math.max(tankDir.x, tankDir.z) > 0.2 ? 1 : 0;
+    if (cs !== cutShow) {
+      cutShow = cs;
+      tankLabelOpacity();
+    }
     level = damp(level, levelTarget, 2.2, dt);
     applyLevel(level + Math.sin(time * 2.2) * 0.004);
     // gauge needle breathes with the mode
@@ -1337,6 +1381,7 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     // zoomed in, there is room for the full names (small screens collapse them otherwise)
     css.domElement.classList.toggle('near', camera.position.distanceTo(controls.target) < overviewDist() * 0.55);
     css.render(scene, camera);
+    hideUnderHud();
   }
 
   function resize() {

@@ -115,7 +115,9 @@ function onSelect(sel) {
   if (!sel) return closeDrawer();
   if (sel.type === 'node' && sel.id === 'V') {
     closeDrawer();
+    setValveState(unit.mode === 'full' ? 'full' : 'fill');
     openDialog(valveDlg);
+    ensureValve();
     return;
   }
   openDrawer(sel.type === 'node' ? partHTML(sel.id) : connHTML(sel.id));
@@ -346,16 +348,38 @@ reframe();
 
 /* ---------- valve close-up (inside the dialog) ---------- */
 const ports = $('#ports');
-const valve = createValve($('#vgl'), {
-  onPort: (p) => ports.querySelectorAll('li').forEach((li) => li.classList.toggle('on', li.dataset.port === p)),
-});
+// the close-up gets its own WebGL renderer, so it is only built the first time the dialog opens
+let valve = null,
+  valveState = 'fill';
+function ensureValve() {
+  valve ??= createValve($('#vgl'), {
+    onPort: (p) => ports.querySelectorAll('li').forEach((li) => li.classList.toggle('on', li.dataset.port === p)),
+  });
+  valve.setState(valveState);
+}
+const VCAP = {
+  fill: 'Tank filling. Pre-filtered water crosses the screw half to the membrane; clean water comes back through the marked half.',
+  full: 'Tank full. Its back-pressure in the marked half pushes the diaphragm, whose stem shuts the screw half. No water reaches the membrane until the faucet opens.',
+};
+function setValveState(st) {
+  valveState = st;
+  valve?.setState(st);
+  $('#vcap').textContent = VCAP[st];
+  $('#vseg')
+    .querySelectorAll('button')
+    .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === st)));
+}
+$('#vseg')
+  .querySelectorAll('button')
+  .forEach((b) => b.addEventListener('click', () => setValveState(b.dataset.v)));
+setValveState('fill');
 ports.querySelectorAll('li').forEach((li) => {
   li.addEventListener('pointerenter', () => {
-    valve.emphasize(li.dataset.port);
+    valve?.emphasize(li.dataset.port);
     li.classList.add('on');
   });
   li.addEventListener('pointerleave', () => {
-    valve.emphasize(null);
+    valve?.emphasize(null);
     li.classList.remove('on');
   });
 });

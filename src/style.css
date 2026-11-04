@@ -140,6 +140,20 @@ button {
 .hud-top > * {
   pointer-events: auto;
 }
+/* the model fades out under the title instead of running through it */
+.hud-top::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -28px 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(var(--bg) 55%, color-mix(in srgb, var(--bg) 0%, transparent));
+}
+/* 3D labels that drift under the header or the bottom bar */
+.css2d .under-hud {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 .title {
   pointer-events: none !important;
   animation: rise 0.9s both cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -783,13 +797,54 @@ h2 .sw {
   grid-template-columns: 1.1fr 1fr;
 }
 .vgl {
-  position: relative;
-  min-height: 420px;
-  background: radial-gradient(70% 70% at 50% 45%, var(--tint), transparent 75%);
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+  background: radial-gradient(70% 70% at 50% 55%, var(--tint), transparent 75%);
   border-right: 1px solid var(--rule);
 }
-.vgl canvas {
+.vview {
+  position: relative;
+  flex: 1;
+  min-height: 380px;
+}
+.vview canvas {
   display: block;
+}
+.vstate {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  padding: 18px 18px 0;
+}
+.vseg {
+  display: flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+}
+.vseg button {
+  border: 0;
+  background: none;
+  padding: 6px 11px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--muted);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.vseg button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.vcap {
+  min-height: 3.9em;
+  font-size: 13px;
+  color: var(--muted);
 }
 .vtext {
   padding: 32px 28px 28px;
@@ -897,8 +952,21 @@ h2 .sw {
   pointer-events: none;
   background: none;
   border: 0;
-  font: 600 12px var(--display);
+  font: 600 12px / 1.25 var(--display);
   color: var(--c);
+  transition: opacity 0.3s;
+}
+.vpair.alert {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--c);
+  color: #fff;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.vpair small {
+  font-weight: 500;
+  color: var(--muted);
 }
 
 /* inline colour dash + IN/OUT words used in tour captions */
@@ -932,10 +1000,9 @@ b.out {
   gap: 6px;
   padding: 3px 9px;
   border-radius: 999px;
+  /* no backdrop blur: these move every frame over the canvas, and Safari keeps a blurred layer per label */
   background: var(--card);
   border: 1px solid var(--rule);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   font: 500 11.5px var(--display);
   color: var(--ink);
   white-space: nowrap;
@@ -1047,9 +1114,12 @@ b.out {
     grid-template-columns: 1fr;
   }
   .vgl {
-    min-height: 300px;
+    min-height: 0;
     border-right: 0;
     border-bottom: 1px solid var(--rule);
+  }
+  .vview {
+    min-height: 320px;
   }
   .vtext {
     padding: 22px 20px;
