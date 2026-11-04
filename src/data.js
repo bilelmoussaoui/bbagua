@@ -75,13 +75,13 @@ export const PARTS = {
     t: 'Carbon block',
     d: 'Compressed carbon in a white net, the last pre-filter. Right cup. Fed from stage 2 inside the shared head. Unscrew the cup to change the cartridge.',
     life: [1],
-    conn: [['teal', 'Out (middle of the head’s right end) → T-fitting on the shelf (gauge + valve)']],
+    conn: [['teal', 'Out (middle of the head’s right end) → T-fitting right beside it (gauge + valve)']],
     flush: true,
   },
   GT: {
     k: 'Fitting',
     t: 'Gauge T-fitting',
-    d: 'Back-left corner of the shelf. Splits the pre-filtered water between the gauge and the 4-way valve.',
+    d: 'Right on the stage 3 outlet, just past the head’s right end. Splits the pre-filtered water: a short stub up to the 4-way valve, and a long line along the front of the shelf (behind the panel) to the gauge.',
     conn: [
       ['teal', '← stage 3'],
       ['teal', '→ pressure gauge'],
@@ -101,7 +101,7 @@ export const PARTS = {
   V: {
     k: 'Valve',
     t: '4-way valve',
-    d: 'Two halves, one pair each. The screw half carries pre-filtered water to the membrane and shuts when the tank is full. The marked half carries clean water back, one way only.',
+    d: 'Two halves, one pair each. The screw half carries pre-filtered water to the membrane and shuts when the tank is full. The marked half carries clean water back, one way only. Hangs at the back-right corner, marked half facing out (right), so every tube to it is short.',
     conn: [],
   },
   S4: {

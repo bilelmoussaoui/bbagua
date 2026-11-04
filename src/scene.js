@@ -10,7 +10,10 @@ import { sectionMaterial } from './section.js';
 /* Layout in scene units (~10 cm). x → right, y → up, z → toward viewer.
    Shelf top at y = 0, cups hang below it, floor at y = -3.35, countertop at y = 3.0. */
 const ROUTES = {
-  // inlet on the gauge (left) end of the head, outlet on the right end
+  // Tidy layout: the gauge T sits right on the stage 3 outlet and the valve hangs at the back-right,
+  // so the right-hand joins are a few cm each. The long runs travel in bands: the gauge line along
+  // the shelf front (behind the panel), the feed and the drain along the back plate, and the tank
+  // and faucet lines as a parallel pair above the post-filter.
   k1: [
     [-3.68, -2.25, -0.95],
     [-3.2, -2.25, -0.95],
@@ -20,62 +23,54 @@ const ROUTES = {
   ],
   k4: [
     [2.48, -0.31, 0],
-    [2.64, -0.31, 0],
-    [2.64, -0.31, -0.75],
-    [-2.9, -0.31, -0.75],
-    [-2.9, 0.12, -0.75],
-    [-2.9, 0.12, -0.55],
-    [-2.62, 0.12, -0.55],
+    [2.72, -0.31, 0],
   ],
   kG: [
-    [-2.35, 0.12, -0.3],
-    [-2.35, 0.12, 0.35],
-    [-2.0, 0.45, 0.45],
+    [2.95, -0.31, 0.26],
+    [2.95, -0.31, 0.55],
+    [2.95, 0.12, 0.55],
+    [-2.0, 0.12, 0.55],
+    [-2.0, 0.45, 0.55],
     [-2.0, 0.45, 0.67],
   ],
   k4b: [
-    [-2.08, 0.12, -0.55],
-    [2.99, 0.12, -0.55],
-    [2.99, -0.45, -0.55],
-    [2.99, -0.45, 0.25],
-    [2.99, -0.17, 0.25],
+    [2.95, -0.31, -0.26],
+    [2.95, -0.31, -0.55],
+    [2.95, -0.07, -0.55],
   ],
   k5: [
-    [2.99, 0.87, 0.25],
-    [2.99, 1.75, 0.25],
-    [-2.2, 1.75, 0.25],
-    [-2.2, 0.5, 0.25],
-    [-2.2, 0.5, -0.1],
+    [2.95, 0.97, -0.55],
+    [2.95, 1.17, -0.55],
+    [-2.15, 1.17, -0.55],
+    [-2.15, 0.5, -0.55],
+    [-2.15, 0.5, -0.1],
     [-1.75, 0.5, -0.1],
   ],
   k6: [
     [1.84, 0.6, -0.1],
-    [2.3, 0.6, -0.1],
-    [2.3, 0.6, -0.3],
-    [3.4, 0.6, -0.3],
-    [3.4, -0.62, -0.3],
-    [3.4, -0.62, 0.25],
-    [2.75, -0.62, 0.25],
-    [2.75, -0.17, 0.25],
+    [3.19, 0.6, -0.1],
+    [3.19, -0.42, -0.1],
+    [3.19, -0.42, -0.55],
+    [3.19, -0.07, -0.55],
   ],
   k7: [
-    [2.75, 0.87, 0.25],
-    [2.75, 1.12, 0.25],
-    [2.75, 1.12, -0.1],
+    [3.19, 0.97, -0.55],
+    [3.19, 1.12, -0.55],
+    [3.19, 1.12, -0.1],
     [1.82, 1.12, -0.1],
   ],
   k8: [
     [1.62, 1.34, -0.1],
-    [1.62, 2.05, -0.1],
-    [4.05, 2.05, -0.1],
-    [4.05, -0.11, -0.1],
+    [1.62, 1.5, -0.1],
+    [3.6, 1.5, -0.1],
+    [3.6, -0.11, -0.1],
     [4.39, -0.11, -0.1],
   ],
   k10: [
     [-1.45, 1.29, -0.1],
-    [-1.45, 2.4, -0.1],
-    [3.8, 2.4, -0.1],
-    [3.8, 2.4, 0.3],
+    [-1.45, 1.75, -0.1],
+    [3.8, 1.75, -0.1],
+    [3.8, 1.75, 0.3],
     [3.8, 3.12, 0.3],
   ],
   k11: [
@@ -101,11 +96,11 @@ export const FOCUS = {
   S2: { t: [0, -1.4, 0.3], d: 5.6 },
   S3: { t: [1.6, -1.4, 0.3], d: 5.6 },
   GA: { t: [-2.0, 0.45, 0.6], d: 3.2 },
-  GT: { t: [-2.3, 0.2, -0.2], d: 3.8, dir: HIGH },
-  V: { t: [2.9, 0.35, 0.25], d: 3.8 },
+  GT: { t: [2.85, -0.2, 0], d: 3.4, dir: [0.7, 0.35, 1] },
+  V: { t: [3.07, 0.45, -0.4], d: 3.8, dir: [0.8, 0.4, 0.7] },
   S4: { t: [0.1, 0.7, -0.1], d: 6, dir: HIGH },
   S5: { t: [0.1, 1.12, -0.1], d: 5.6, dir: HIGH },
-  CV: { t: [2.8, 0.0, 0.25], d: 2.8, dir: [0.5, 0.2, 1] },
+  CV: { t: [3.19, 0.0, -0.55], d: 2.8, dir: [1, 0.25, 0.5] },
   FR: { t: [0.6, 0.4, -0.6], d: 3.6, dir: [0.2, 0.9, 1] },
   DR: { t: [-3.6, 1.6, -0.2], d: 5.5 },
   J: { t: [2.4, 1.0, 0], d: 6.5, dir: HIGH },
@@ -528,9 +523,9 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
   needle.geometry.translate(0, 0.08, 0);
   add(ga, cylZ(0.26, 0.01, 40), M.glass(0xffffff, 0.15), [-2.0, 0.45, 0.966]);
 
-  const gt = part('GT'); // T on the back-left corner of the shelf
-  add(gt, cylX(0.07, 0.5, 16), M.plastic(0xebe3cc), [-2.35, 0.12, -0.55]);
-  add(gt, cylZ(0.07, 0.24, 16), M.plastic(0xebe3cc), [-2.35, 0.12, -0.44]);
+  const gt = part('GT'); // T on the stage 3 outlet: run front-back, branch facing the head
+  add(gt, cylZ(0.07, 0.5, 16), M.plastic(0xebe3cc), [2.95, -0.31, 0]);
+  add(gt, cylX(0.07, 0.24, 16), M.plastic(0xebe3cc), [2.83, -0.31, 0]);
 
   /* ---- membrane housing in two C-clips on the shelf ---- */
   const clipGeo = new THREE.TorusGeometry(0.365, 0.045, 10, 48, 1.45 * Math.PI)
@@ -692,28 +687,31 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
      Blow test on this unit: the marked half passes air one way only, so it is the clean-water pair,
      with the check valve inside its IN port. The screw half is the feed pair. ---- */
   const v = part('V');
-  const VX = 2.87,
-    VY = 0.35,
-    VZ = 0.25;
+  // hung off the back-right corner, turned so the marked half faces right (MK = +1):
+  // the feed comes up from the T into the left half, the clean water loops down into the right half
+  const VX = 3.07,
+    VY = 0.45,
+    VZ = -0.55,
+    MK = 1;
   const vw = () => M.plastic(0xf3f1ea);
-  add(v, cylX(0.3, 0.2, 40), vw(), [VX - 0.12, VY, VZ]);
-  add(v, cylX(0.3, 0.2, 40), vw(), [VX + 0.12, VY, VZ]);
+  add(v, cylX(0.3, 0.2, 40), vw(), [VX + MK * 0.12, VY, VZ]);
+  add(v, cylX(0.3, 0.2, 40), vw(), [VX - MK * 0.12, VY, VZ]);
   add(v, cylX(0.27, 0.05, 40), M.plastic(0xe2dfd6), [VX, VY, VZ]);
   [-0.18, -0.06, 0.06, 0.18].forEach((dy) =>
-    add(v, new THREE.BoxGeometry(0.05, 0.05, 0.6 - Math.abs(dy) * 0.9), vw(), [VX - 0.235, VY + dy, VZ]),
+    add(v, new THREE.BoxGeometry(0.05, 0.05, 0.6 - Math.abs(dy) * 0.9), vw(), [VX + MK * 0.235, VY + dy, VZ]),
   );
-  add(v, new THREE.BoxGeometry(0.06, 0.6, 0.16), vw(), [VX - 0.24, VY, VZ]);
+  add(v, new THREE.BoxGeometry(0.06, 0.6, 0.16), vw(), [VX + MK * 0.24, VY, VZ]);
   for (let a = 0; a < 8; a++) {
     const ang = Math.PI / 8 + (a / 8) * Math.PI * 2;
     add(v, new THREE.SphereGeometry(0.06, 14, 10), vw(), [
-      VX - 0.18,
+      VX + MK * 0.18,
       VY + Math.sin(ang) * 0.31,
       VZ + Math.cos(ang) * 0.31,
     ]);
   }
   for (let a = 0; a < 6; a++) {
     const ang = (a / 6) * Math.PI * 2;
-    add(v, cylX(0.03, 0.03, 12), M.chrome(), [VX + 0.235, VY + Math.sin(ang) * 0.25, VZ + Math.cos(ang) * 0.25]);
+    add(v, cylX(0.03, 0.03, 12), M.chrome(), [VX - MK * 0.235, VY + Math.sin(ang) * 0.25, VZ + Math.cos(ang) * 0.25]);
   }
   [-0.12, 0.12].forEach((dx) => {
     [
@@ -726,8 +724,8 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
   });
 
   const cv = part('CV');
-  add(cv, cylY(0.05, 0.08, 16), M.plastic(0xe9e3d2), [VX - 0.12, VY - 0.48, VZ]);
-  add(cv, cylY(0.02, 0.085, 10), M.matte(0x6b5f48), [VX - 0.12, VY - 0.48, VZ]);
+  add(cv, cylY(0.05, 0.08, 16), M.plastic(0xe9e3d2), [VX + MK * 0.12, VY - 0.48, VZ]);
+  add(cv, cylY(0.02, 0.085, 10), M.matte(0x6b5f48), [VX + MK * 0.12, VY - 0.48, VZ]);
 
   /* ---- pressure tank (photo): squat white tank, plastic shut-off valve with blue lever on top,
      recessed air valve underneath. Water is stored ABOVE a rubber diaphragm, the air charge below it.
@@ -1038,7 +1036,7 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     S3: ['<b>3</b>Carbon block', [1.6, -1.75, 0.62]],
     S4: ['<b>4</b>Membrane', [0.95, 0.5, 0.36]],
     S5: ['<b>5</b>Post-filter', [0.15, 1.12, 0.17]],
-    V: ['4-way valve', [2.87, -0.4, 0.45]],
+    V: ['4-way valve', [3.5, 0.45, -0.55]],
     GA: ['Gauge', [-2.0, 0.88, 0.95]],
     TK: ['Tank · 8 L', [4.7, -2.4, 1.25]],
     FT: ['Faucet', [3.5, 4.95, 0.3]],
@@ -1109,7 +1107,12 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
       const hov = state.hover?.type === 'node' && state.hover.id === id;
       partGlow(id, sel ? 0.42 : hov ? 0.22 : 0);
       labels[id]?.element.classList.toggle('on', sel);
+      // names stay collapsed to a dot; pointing at the part itself reveals its name too
+      labels[id]?.element.classList.toggle('peek', hov);
     });
+    // the tank's inside labels only while the tank is pointed at or picked
+    const tk = (s) => s?.type === 'node' && s.id === 'TK';
+    css.domElement.classList.toggle('tk-on', tk(state.sel) || tk(state.hover));
     // restore water look
     waterMat.emissive.set(0x0a3d66);
   }

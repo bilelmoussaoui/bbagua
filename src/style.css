@@ -1044,6 +1044,29 @@ b.out {
   color: #3a4654;
   text-shadow: none;
 }
+/* Labels stay out of the way: each part is a dot (stages keep their number), and the name
+   opens on hover, keyboard focus, when the part is pointed at in 3D, or while it is picked. */
+.css2d .lbl:not(.on):not(.peek):not(:hover):not(:focus-visible) {
+  gap: 0;
+  padding: 4px;
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+}
+.css2d .lbl:not(.on):not(.peek):not(:hover):not(:focus-visible) .t {
+  display: none;
+}
+.css2d .lbl:not(.stage):not(.on):not(.peek):not(:hover):not(:focus-visible)::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.lbl.peek {
+  border-color: var(--accent);
+}
+.css2d:not(.tk-on) .tlbl {
+  visibility: hidden;
+}
 .lbl.pre {
   opacity: 0;
   transform: translateY(8px) scale(0.85);
@@ -1261,22 +1284,6 @@ b.out {
   }
   .lbl {
     font-size: 10.5px;
-  }
-  /* badges collapse to their marker so the unit stays visible; the name shows when
-     the part is picked or once you zoom in */
-  .css2d:not(.near) .lbl:not(.on):not(:hover) {
-    gap: 0;
-    padding: 3px;
-  }
-  .css2d:not(.near) .lbl:not(.on):not(:hover) .t {
-    display: none;
-  }
-  .css2d:not(.near) .lbl:not(.stage):not(.on):not(:hover)::before {
-    content: "";
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
   }
 }
 @keyframes sheetin {
