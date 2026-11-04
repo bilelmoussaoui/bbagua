@@ -15,28 +15,15 @@ const ROUTES = {
     [-3.2, -2.25, -0.95],
     [-3.2, -3.15, -0.1],
     [-3.2, -3.15, 1.0],
-    [2.75, -3.15, 1.0],
-    [2.75, -0.3, 1.0],
-    [2.19, -0.3, 1.0],
-    [2.19, -0.3, 0.62],
-  ],
-  k2: [
-    [1.01, -0.3, 0.62],
-    [1.01, -0.3, 0.92],
-    [0.59, -0.3, 0.92],
-    [0.59, -0.3, 0.62],
-  ],
-  k3: [
-    [-0.59, -0.3, 0.62],
-    [-0.59, -0.3, 0.92],
-    [-1.01, -0.3, 0.92],
-    [-1.01, -0.3, 0.62],
+    [2.7, -3.15, 1.0],
+    [2.7, -3.15, 0],
+    [2.7, -0.31, 0],
+    [2.48, -0.31, 0],
   ],
   k4: [
-    [-2.19, -0.3, 0.62],
-    [-2.19, -0.3, 0.95],
-    [-2.9, -0.3, 0.95],
-    [-2.9, 0.12, 0.95],
+    [-2.48, -0.31, 0],
+    [-2.9, -0.31, 0],
+    [-2.9, 0.12, 0],
     [-2.9, 0.12, -0.55],
     [-2.62, 0.12, -0.55],
   ],
@@ -318,12 +305,14 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
   ).castShadow = false;
 
   /* ---- three 10" housings hanging under the shelf; ports are elbows on the sides of each head ---- */
+  // the cup's top is a wider threaded collar that screws into the shared head
   const sumpProfile = [
     [0, -2.5],
     [0.4, -2.48],
     [0.52, -2.4],
     [0.56, -2.25],
-    [0.56, -0.02],
+    [0.56, -0.36],
+    [0.6, -0.32],
     [0.6, 0],
     [0.6, 0.02],
     [0, 0.02],
@@ -347,7 +336,9 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
       [0.39, -2.45],
       [0.5, -2.38],
       [0.545, -2.25],
-      [0.555, 0.02],
+      [0.545, -0.36],
+      [0.585, -0.32],
+      [0.585, 0.02],
       [0, 0.02],
     ].map(([x, y]) => new THREE.Vector2(x, y)),
   );
@@ -442,16 +433,22 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     }),
   ];
   const capMat = [M.matte(0xefeee9), M.plastic(0x27a3d6), M.plastic(0xe9e9e6)];
-  const ribGeo = new THREE.BoxGeometry(0.05, 2.1, 0.05);
-  const PORT_A = 0.96; // boss angle from the front, radians
+  const ribGeo = new THREE.BoxGeometry(0.05, 1.95, 0.05);
+  const gripGeo = new THREE.BoxGeometry(0.04, 0.24, 0.04);
+  /* Product photos: the three cups hang from ONE moulded head block under the shelf. Stage 1 → 2 → 3
+     run through channels inside it, so there are no tubes between the cups. Only the inlet (stage 1 end
+     face) and the outlet (stage 3 end face) are push-fit ports. Each cup unscrews
+     from the head to change its cartridge. */
+  add(bracket, new RoundedBoxGeometry(4.7, 0.56, 1.2, 3, 0.1), M.plastic(), [0, -0.31, 0]);
+  // faint moulding seams where each head bulges out of the block
+  [1.6, 0, -1.6].forEach((x) => add(bracket, cylY(0.64, 0.5, 56), M.plastic(0xf1f4f6), [x, -0.33, 0]));
   [
     ['S1', 1.6],
     ['S2', 0],
     ['S3', -1.6],
   ].forEach(([id, x]) => {
     const g = part(id);
-    add(g, cylY(0.6, 0.62, 56), M.plastic(), [x, -0.31, 0]);
-    add(g, cylY(0.625, 0.07, 56), M.plastic(0xeef1f3), [x, -0.64, 0]);
+    add(g, cylY(0.63, 0.1, 56), M.plastic(0xeef1f3), [x, -0.63, 0]);
     add(g, sumpGeo, sumpMat, [x, -0.68, 0]);
     const [media, wIn, wOut] = STAGE[id];
     const sec = sectionMaterial('radial', { inC: wIn.c, outC: wOut.c, speck: wIn.s, speckN: wIn.n, media });
@@ -475,18 +472,21 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     for (let a = 0; a < 14; a++) {
       const ang = (a / 14) * Math.PI * 2;
       if (ang < CUT_R + 0.06 || ang > Math.PI * 2 - CUT_L - 0.06) continue;
-      add(g, ribGeo, M.plastic(0xeef1f3), [x + Math.sin(ang) * 0.56, -1.95, Math.cos(ang) * 0.56]);
+      add(g, ribGeo, M.plastic(0xeef1f3), [x + Math.sin(ang) * 0.56, -2.02, Math.cos(ang) * 0.56]);
     }
-    [-1, 1].forEach((side) => {
-      const bx = x + side * Math.sin(PORT_A) * 0.6,
-        bz = Math.cos(PORT_A) * 0.6;
-      add(g, new RoundedBoxGeometry(0.2, 0.22, 0.2, 2, 0.04), M.plastic(), [bx, -0.3, bz]);
-      elbow(g, [
-        [bx, -0.3, bz],
-        [x + side * 0.59, -0.3, bz + 0.06],
-        [x + side * 0.59, -0.3, 0.57],
-      ]);
-    });
+    // grip ridges round the threaded collar, for the housing wrench
+    for (let a = 0; a < 28; a++) {
+      const ang = (a / 28) * Math.PI * 2;
+      if (ang < CUT_R + 0.04 || ang > Math.PI * 2 - CUT_L - 0.04) continue;
+      add(g, gripGeo, M.plastic(0xf0f2f4), [x + Math.sin(ang) * 0.6, -0.84, Math.cos(ang) * 0.6]);
+    }
+    // the unit's only pre-filter ports: inlet on the stage 1 end face, outlet on the stage 3 end face
+    const port = id === 'S1' ? 1 : id === 'S3' ? -1 : 0;
+    if (port) {
+      // threaded boss in the middle of the end face, push-fit nipple the tube plugs onto
+      add(g, cylX(0.12, 0.07, 24), M.plastic(), [port * 2.38, -0.31, 0]);
+      add(g, cylX(0.075, 0.08, 16), M.plastic(0xebe3cc), [port * 2.45, -0.31, 0]);
+    }
   });
 
   /* ---- gauge on the front panel, teed into the stage 3 outlet ---- */
@@ -1196,7 +1196,7 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
       put(reduceMotion ? 1 : 0);
       tw.add(0.9, put, { delay: 0.25 + i * 0.07, e: ease.back });
     });
-    const order = ['k1', 'k2', 'k3', 'k4', 'kG', 'k4b', 'k5', 'k6', 'k11', 'k12', 'k7', 'k8', 'k10'];
+    const order = ['k1', 'k4', 'kG', 'k4b', 'k5', 'k6', 'k11', 'k12', 'k7', 'k8', 'k10'];
     order.forEach((id, i) =>
       tw.add(0.7, (k) => setTubeReveal(tubes[id].mesh, k), { delay: 1.2 + i * 0.12, e: ease.out }),
     );
@@ -1218,9 +1218,7 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     const steps = [
       [['k1'], 0.9],
       [['S1'], 0.55],
-      [['k2'], 0.3],
       [['S2'], 0.55],
-      [['k3'], 0.3],
       [['S3'], 0.55],
       [['k4'], 0.5],
       [['kG', 'k4b'], 0.6],

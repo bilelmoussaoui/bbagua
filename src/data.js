@@ -1,13 +1,12 @@
 // Facts come from the Bbagua EUR-50 manual, product page, and photos of the actual unit taken apart.
 // The real tubes are all white; colours here are a code shown as bands at each tube end.
 // Restrictor: inline capsule on the drain line (photo). Check valve: inside the 4-way valve's product IN port (blow test).
+// Pre-filters: the three cups hang from one moulded head; stage 1 → 2 → 3 run through it, no tubes (product photos).
 // Not yet photographed: faucet, drain collar, the unit installed (positions schematic).
 // 4-way valve: marked half = product pair (one-way, blow test), screw half = feed pair.
 
 export const TUBES = {
   orange: { hex: 0xe4741f, css: '#e4741f', name: 'Orange' },
-  lime: { hex: 0x86b51d, css: '#86b51d', name: 'Lime' },
-  magenta: { hex: 0xc93a92, css: '#c93a92', name: 'Magenta' },
   teal: { hex: 0x10a0b4, css: '#10a0b4', name: 'Teal' },
   purple: { hex: 0x8a4fd0, css: '#8a4fd0', name: 'Purple' },
   blue: { hex: 0x2f7be0, css: '#2f7be0', name: 'Blue' },
@@ -27,8 +26,6 @@ export const WATER = {
 };
 export const TUBE_WATER = {
   k1: 'raw',
-  k2: 'sed',
-  k3: 'gac',
   k4: 'feed',
   kG: 'feed',
   k4b: 'feed',
@@ -60,34 +57,25 @@ export const PARTS = {
   S1: {
     k: 'Stage 1',
     t: 'Sediment 5 µm',
-    d: 'Spun polypropylene that catches sand, rust and particles. Right cup, under the bracket.',
+    d: 'Spun polypropylene that catches sand, rust and particles. Right cup. The water goes on to stage 2 through a channel inside the shared head, not a tube. Unscrew the cup to change the cartridge.',
     life: [1],
-    conn: [
-      ['orange', 'In (right side of head) ← cold supply'],
-      ['lime', 'Out (left side) → stage 2'],
-    ],
+    conn: [['orange', 'In (middle of the head’s right end) ← cold supply']],
     flush: true,
   },
   S2: {
     k: 'Stage 2',
     t: 'Granular carbon',
-    d: 'Loose carbon granules in a ribbed shell with blue caps. Removes chlorine, taste and smell. Middle cup.',
+    d: 'Loose carbon granules in a ribbed shell with blue caps. Removes chlorine, taste and smell. Middle cup. Fed from stage 1 and feeding stage 3 inside the shared head, so it has no ports of its own. Unscrew the cup to change the cartridge.',
     life: [1],
-    conn: [
-      ['lime', 'In ← stage 1'],
-      ['magenta', 'Out → stage 3'],
-    ],
+    conn: [],
     flush: true,
   },
   S3: {
     k: 'Stage 3',
     t: 'Carbon block',
-    d: 'Compressed carbon in a white net, the last pre-filter. Left cup, under the gauge.',
+    d: 'Compressed carbon in a white net, the last pre-filter. Left cup, under the gauge. Fed from stage 2 inside the shared head. Unscrew the cup to change the cartridge.',
     life: [1],
-    conn: [
-      ['magenta', 'In ← stage 2'],
-      ['teal', 'Out → T-fitting on the shelf (gauge + valve)'],
-    ],
+    conn: [['teal', 'Out (middle of the head’s left end) → T-fitting on the shelf (gauge + valve)']],
     flush: true,
   },
   GT: {
@@ -206,10 +194,8 @@ export const FLUSH = [
 ];
 
 export const CONNS = {
-  k1: { n: 'Water in', tube: 'orange', from: 'Adapter valve', to: 'Stage 1 head, right side' },
-  k2: { n: 'Stage 1 → 2', tube: 'lime', from: 'Stage 1 head, left side', to: 'Stage 2 head, right side' },
-  k3: { n: 'Stage 2 → 3', tube: 'magenta', from: 'Stage 2 head, left side', to: 'Stage 3 head, right side' },
-  k4: { n: 'Stage 3 out', tube: 'teal', from: 'Stage 3 head, left side', to: 'Gauge T-fitting' },
+  k1: { n: 'Water in', tube: 'orange', from: 'Adapter valve', to: 'Head inlet, right end' },
+  k4: { n: 'Stage 3 out', tube: 'teal', from: 'Head outlet, left end', to: 'Gauge T-fitting' },
   kG: { n: 'Gauge line', tube: 'teal', from: 'Gauge T-fitting', to: 'Pressure gauge' },
   k4b: { n: 'Into the valve', tube: 'teal', from: 'Gauge T-fitting', to: 'Valve screw half, IN (bottom)' },
   k5: { n: 'To the membrane', tube: 'teal', from: 'Valve screw half, OUT (top)', to: 'Membrane cap end' },
@@ -233,14 +219,14 @@ export const CONNS = {
 
 export const MODES = {
   making: {
-    on: ['k1', 'k2', 'k3', 'k4', 'k4b', 'k5', 'k6', 'k7', 'k8', 'k11', 'k12'],
+    on: ['k1', 'k4', 'k4b', 'k5', 'k6', 'k7', 'k8', 'k11', 'k12'],
     rev: [],
     lvl: 0.45,
     txt: 'Filling the tank. Clean water to the tank, salty waste to the drain.',
   },
   full: { on: [], rev: [], lvl: 0.95, txt: 'Tank full. The valve shuts off the incoming water. Nothing flows.' },
   tap: {
-    on: ['k1', 'k2', 'k3', 'k4', 'k4b', 'k5', 'k6', 'k7', 'k8', 'k10', 'k11', 'k12'],
+    on: ['k1', 'k4', 'k4b', 'k5', 'k6', 'k7', 'k8', 'k10', 'k11', 'k12'],
     rev: ['k8'],
     lvl: 0.25,
     txt: 'Faucet open. Tank → post-filter → glass, and the unit refills.',
@@ -260,21 +246,21 @@ export const TOUR = [
   },
   {
     mode: 'making',
-    tubes: ['k1', 'k2'],
+    tubes: ['k1'],
     focus: 'S1',
     t: 'Stage 1 · Sediment',
-    c: `Catches sand and rust. ${dot('lime')}Lime to stage 2.`,
+    c: 'Catches sand and rust. The three cups share one head: the water passes to stage 2 inside it, with no tube.',
   },
   {
     mode: 'making',
-    tubes: ['k2', 'k3'],
+    tubes: [],
     focus: 'S2',
     t: 'Stage 2 · Granular carbon',
-    c: `Removes chlorine, taste and smell. ${dot('magenta')}Magenta to stage 3.`,
+    c: 'Removes chlorine, taste and smell, then on to stage 3 through the head.',
   },
   {
     mode: 'making',
-    tubes: ['k3', 'k4', 'kG', 'k4b'],
+    tubes: ['k4', 'kG', 'k4b'],
     focus: 'S3',
     t: 'Stage 3 · Carbon block',
     c: `The last pre-filter. ${dot('teal')}Teal up to a T: one branch to the <b>gauge</b>, one to the 4-way valve.`,

@@ -180,8 +180,6 @@ const legend = $('#legend'),
   legendBtn = $('#legendBtn');
 const LEG = [
   ['orange', 'Water in'],
-  ['lime', 'Stage 1 → 2'],
-  ['magenta', 'Stage 2 → 3'],
   ['teal', 'Pre-filtered'],
   ['purple', 'Clean water'],
   ['blue', 'Tank'],
