@@ -68,8 +68,8 @@ const ROUTES = {
     [1.62, 1.34, -0.1],
     [1.62, 2.05, -0.1],
     [4.05, 2.05, -0.1],
-    [4.05, -0.12, -0.1],
-    [4.4, -0.12, -0.1],
+    [4.05, -0.11, -0.1],
+    [4.39, -0.11, -0.1],
   ],
   k10: [
     [-1.45, 1.29, -0.1],
@@ -782,7 +782,7 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
     M.plastic(0xe6e5df),
     [TX, TB + 0.95, TZ],
   );
-  // top valve: ribbed collar, white elbow body, blue lever, threaded outlet pointing at the unit
+  // top valve: ribbed collar, horizontal body, flat blue lever, outlet pointing at the unit
   add(tk, cylY(0.16, 0.1, 24), M.plastic(0xe9e8e2), [TX, TB + 3.03, TZ]);
   for (let a = 0; a < 18; a++) {
     const ang = (a / 18) * Math.PI * 2;
@@ -792,9 +792,15 @@ export function createScene(host, { onSelect, inset: inset0 } = {}) {
       TZ + Math.sin(ang) * 0.165,
     ]);
   }
-  add(tk, cylY(0.09, 0.26, 20), M.plastic(0xf6f6f4), [TX, TB + 3.2, TZ]);
-  add(tk, cylX(0.075, 0.26, 20), M.plastic(0xf6f6f4), [TX - 0.14, TB + 3.23, TZ]);
-  add(tk, new RoundedBoxGeometry(0.1, 0.24, 0.07, 2, 0.03), M.matte(0x1e5fc0), [TX, TB + 3.42, TZ + 0.02]);
+  // short threaded stub up into a horizontal ball-valve body; the blue lever lies flat on top,
+  // along the body when open
+  const VB = TB + 3.24;
+  add(tk, cylY(0.075, 0.12, 20), M.plastic(0xf6f6f4), [TX, TB + 3.12, TZ]);
+  add(tk, cylX(0.095, 0.4, 24), M.plastic(0xf6f6f4), [TX - 0.04, VB, TZ]);
+  add(tk, cylX(0.1, 0.05, 6), M.plastic(0xeceae4), [TX + 0.18, VB, TZ]);
+  add(tk, cylX(0.06, 0.08, 16), M.plastic(0xebe3cc), [TX - 0.27, VB, TZ]);
+  add(tk, cylY(0.04, 0.06, 16), M.plastic(0xf6f6f4), [TX, VB + 0.11, TZ]);
+  add(tk, new RoundedBoxGeometry(0.34, 0.04, 0.09, 2, 0.015), M.matte(0x1e5fc0), [TX - 0.07, VB + 0.15, TZ]);
   // inside, as a solid cross-section: water on top, rubber diaphragm, air charge below
   const innerR = (y) => radiusAt(Math.min(2.94, Math.max(0.06, y))) * 0.955;
   const regionMats = {
